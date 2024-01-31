@@ -3,8 +3,8 @@ import torch.nn
 import requests
 from io import BytesIO
 
-from utils import Backbone, Head, SatlasPretrain_weights, adjust_state_dict_prefix
-from models import *
+from satlaspretrain_models.utils import Backbone, Head, SatlasPretrain_weights, adjust_state_dict_prefix
+from satlaspretrain_models.models import *
 
 class Weights:
     def __init__(self):
