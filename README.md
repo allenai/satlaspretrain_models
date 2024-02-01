@@ -123,15 +123,16 @@ print([feature_map.shape for feature_map in output])
 # All heads are randomly initialized and provided only for convenience for fine-tuning.
 model = weights_manager.get_pretrained_model("Aerial_SwinB_MI", fpn=True, head=satlaspretrain_models.Head.CLASSIFY, head_outputs=2)
 
-# Expected input is 8-bit (0-255) aerial imagery at 0.5 - 2 m/pixel.
+# Expected input is 8-bit (0-255) aerial images at 0.5 - 2 m/pixel.
 # The 0-255 pixel values should be divided by 255 so they are 0-1.
-# tensor = rgb_image[None, :, :, :] / 255
-tensor = torch.zeros((1, 3, 512, 512), dtype=torch.float32)
+# This multi-image model is trained to input 4 images but should perform well with different numbers of images.
+# tensor = torch.stack([rgb_image1, rgb_image2], dim=0)[None, :, :, :, :] / 255
+tensor = torch.zeros((1, 4, 3, 512, 512), dtype=torch.float32)
 
 # The head needs to be fine-tuned on a downstream classification task.
 # It outputs classification probabilities.
 model.eval()
-output = model(tensor)
+output = model(tensor.reshape(1, 4*3, 512, 512))
 print(output)
 # tensor([[0.0266, 0.9734]])
 ```
@@ -143,14 +144,16 @@ print(output)
 model = weights_manager.get_pretrained_model("Landsat_SwinB_MI", fpn=True, head=satlaspretrain_models.Head.DETECT, head_outputs=5)
 
 # Expected input is Landsat B1-B11 stacked in order.
+# This multi-image model is trained to input 8 images but should perform well with different numbers of images.
 # The 16-bit pixel values are normalized as follows:
-# tensor = torch.clip(landsat_image[None, :, :, :]-4000)/16320, 0, 1)
-tensor = torch.zeros((1, 11, 512, 512), dtype=torch.float32)
+# landsat_images = torch.stack([landsat_image1, landsat_image2], dim=0)
+# tensor = torch.clip(landsat_images[None, :, :, :, :]-4000)/16320, 0, 1)
+tensor = torch.zeros((1, 8, 11, 512, 512), dtype=torch.float32)
 
 # The head needs to be fine-tuned on a downstream object detection task.
 # It outputs bounding box detections.
 model.eval()
-output = model(tensor)
+output = model(tensor.reshape(1, 8*11, 512, 512))
 print(output)
 #[{'boxes': tensor([[ 67.0772, 239.2646, 95.6874, 16.3644], ...]),
 # 'labels': tensor([3, ...]),
