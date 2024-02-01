@@ -47,30 +47,27 @@ pip install satlaspretrain_models
 Available Pretrained Models model_ids
 ----------------------------
 #### Sentinel-2 Pretrained Models
-| Configuration | Swin-v2-Base | Swin-v2-Tiny | Resnet50 | Resnet152 |
+|  | Single-image, RGB | Single-image, MS | Multi-image, RGB | Multi-image, MS |
 | ---------- | ------------ | ------------ | -------- | --------- |
-| *Single-image, RGB* | Sentinel2_SwinB_SI_RGB | Sentinel2_SwinT_SI_RGB | Sentinel2_Resnet50_SI_RGB | Sentinel2_Resnet152_SI_RGB |
-| *Single-image, MS* | Sentinel2_SwinB_SI_MS | unavailable | Sentinel2_Resnet50_SI_MS | Sentinel2_Resnet152_SI_MS |
-| *Multi-image, RGB* | Sentinel2_SwinB_MI_RGB | unavailable | Sentinel2_Resnet50_MI_RGB | Sentinel2_Resnet152_MI_RGB |
-| *Multi-image, MS* | Sentinel2_SwinB_MI_MS | unavailable | unavailable | unavailable |
+| Swin-v2-Base | Sentinel2_SwinB_SI_RGB | Sentinel2_SwinB_SI_MS | Sentinel2_SwinB_MI_RGB | Sentinel2_SwinB_MI_MS |
+| Swin-v2-Tiny | Sentinel2_SwinT_SI_RGB | | | |
+| Resnet50 | Sentinel2_Resnet50_SI_RGB | Sentinel2_Resnet50_SI_MS | Sentinel2_Resnet50_MI_RGB | | 
+| Resnet152 | Sentinel2_Resnet152_SI_RGB | Sentinel2_Resnet152_SI_MS | Sentinel2_Resnet152_MI_RGB | |
 
 #### Sentinel-1 Pretrained Models
-| Configuration | Swin-v2-Base | Swin-v2-Tiny | Resnet50 | Resnet152 |
-| ---------- | ------------ | ------------ | -------- | --------- |
-| *Single-image, vh+vv* | Sentinel1_SwinB_SI | unavailable | unavailable | unavailable |
-| *Multi-image, vh+vv* | Sentinel1_SwinB_MI | unavailable | unavailable | unavailable |
+|  | Single-image, VH+VV | Multi-image, VH+VV |
+| ---------- | ------------ | ------------ |
+| Swin-v2-Base | Sentinel1_SwinB_SI | Sentinel1_SwinB_MI | 
 
 #### Landsat 8/9 Pretrained Models
-| Configuration | Swin-v2-Base | Swin-v2-Tiny | Resnet50 | Resnet152 |
-| ---------- | ------------ | ------------ | -------- | --------- |
-| *Single-image, all bands* | Landsat_SwinB_SI | unavailable | unavailable | unavailable |
-| *Multi-image, all bands* | Landsat_SwinB_MI | unavailable | unavailable | unavailable |
+|  | Single-image, all bands | Multi-image, all bands |
+| ---------- | ------------ | ------------ |
+| Swin-v2-Base | Landsat_SwinB_SI | Landsat_SwinB_MI |
 
 #### Aerial (0.5-2m/px high-res imagery) Pretrained Models
-| Configuration | Swin-v2-Base | Swin-v2-Tiny | Resnet50 | Resnet152 |
-| ---------- | ------------ | ------------ | -------- | --------- |
-| *Single-image, RGB* | Aerial_SwinB_SI | unavailable | unavailable | unavailable |
-| *Multi-image, RGB* | Aerial_SwinB_MI | unavailable | unavailable | unavailable |
+|  | Single-image, RGB | Multi-image, RGB |
+| ---------- | ------------ | ------------ |
+| Swin-v2-Base | Aerial_SwinB_SI | Aerial_SwinB_MI |
 
 
 *Single-image* models learn strong representations for individual satellite or aerial images, while *multi-image* models use multiple image captures of the same location for added robustness when making predictions about static objects. In *multi-image* models, feature maps from the backbone are passed through temporal max pooling, so the backbone itself is still applied on individual images, but is trained to provide strong representations after the temporal max pooling step. See [ModelArchitecture.md](ModelArchitecture.md) for more details.

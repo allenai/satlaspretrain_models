@@ -1,1 +1,1 @@
-from model import Weights, Model
+from .model import Weights, Model

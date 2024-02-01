@@ -51,7 +51,7 @@ class Weights:
 
 
 class Model(torch.nn.Module):
-    def __init__(self, num_channels=3, multi_image=False, backbone=Backbone.SWIN, fpn=False, head=None, num_categories=None, weights=None):
+    def __init__(self, num_channels=3, multi_image=False, backbone=Backbone.SWINB, fpn=False, head=None, num_categories=None, weights=None):
         """
         Initializes a model, based on desired imagery source and model components. This class can be used directly to
         create a randomly initialized model (if weights=None) or can be called from the Weights class to initialize a 
@@ -99,7 +99,9 @@ class Model(torch.nn.Module):
         
         # If using a model for multi-image, need the Aggretation to wrap underlying backbone model.
         prefix, prefix_allowed_count = None, None
-        if multi_image:
+        if backbone_arch in [Backbone.RESNET50, Backbone.RESNET152]:
+            prefix_allowed_count = 0
+        elif multi_image:
             backbone = AggregationBackbone(num_channels, backbone)
             prefix_allowed_count = 2
         else:
