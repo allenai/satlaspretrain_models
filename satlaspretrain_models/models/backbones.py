@@ -2,19 +2,29 @@ import torch.nn
 import torchvision
 
 class SwinBackbone(torch.nn.Module):
-    def __init__(self, num_channels):
+    def __init__(self, num_channels, arch='swinb'):
         super(SwinBackbone, self).__init__()
 
-        self.backbone = torchvision.models.swin_v2_b()
+        if arch == 'swinb':
+            self.backbone = torchvision.models.swin_v2_b()
+            self.out_channels = [
+                [4, 128],
+                [8, 256],
+                [16, 512],
+                [32, 1024],
+            ]
+        elif arch == 'swint':
+            self.backbone = torchvision.models.swin_v2_t()
+            self.out_channels = [
+                [4, 96],
+                [8, 192],
+                [16, 384],
+                [32, 768],
+            ]
+        else:
+            raise ValueError("Backbone architecture not supported.")
 
         self.backbone.features[0][0] = torch.nn.Conv2d(num_channels, self.backbone.features[0][0].out_channels, kernel_size=(4, 4), stride=(4, 4))
-
-        self.out_channels = [
-            [4, 128],
-            [8, 256],
-            [16, 512],
-            [32, 1024],
-        ]
 
     def forward(self, x):
         outputs = []
@@ -34,6 +44,8 @@ class ResnetBackbone(torch.nn.Module):
         elif arch == 'resnet152':
             self.resnet = torchvision.models.resnet.resnet152(weights=None)
             ch = [256, 512, 1024, 2048]
+        else:
+            raise ValueError("Backbone architecture not supported.")
 
         self.resnet.conv1 = torch.nn.Conv2d(num_channels, self.resnet.conv1.out_channels, kernel_size=7, stride=2, padding=3, bias=False)
         self.out_channels = [

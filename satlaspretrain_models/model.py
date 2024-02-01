@@ -13,7 +13,7 @@ class Weights:
         """
         super(Weights, self).__init__()
 
-    def get_pretrained_model(self, model_identifier, fpn=False, head=None, head_outputs=None):
+    def get_pretrained_model(self, model_identifier, fpn=False, head=None, num_categories=None):
         """
         Find and load pretrained SatlasPretrain weights, based on the model_identifier argument.
         Option to load pretrained FPN and/or a randomly initialized head.
@@ -23,13 +23,14 @@ class Weights:
             fpn (bool): Whether or not to load a pretrained FPN along with the Backbone.
             head (enum): If specified, a randomly initialized Head will be created along with the 
                         Backbone and [optionally] the FPN.
+            num_categories (int): Number of categories to be included in output from prediction head.
         """
         # Validate that the model identifier is supported.
         if not model_identifier in SatlasPretrain_weights.keys():
             raise ValueError("Invalid model_identifier. See utils.SatlasPretrain_weights.")
 
-        if head and (head_outputs is None):
-            raise ValueError("Must specify head_outputs if head is desired.")
+        if head and (num_categories is None):
+            raise ValueError("Must specify num_categories if head is desired.")
 
         model_info = SatlasPretrain_weights[model_identifier]
 
@@ -44,12 +45,13 @@ class Weights:
         weights = torch.load(weights_file)
 
         # Initialize a pretrained model using the Model() class.
-        model = Model(model_info['num_channels'], model_info['multi_image'], model_info['backbone'], fpn=fpn, head=head, head_outputs=head_outputs, weights=weights)
+        model = Model(model_info['num_channels'], model_info['multi_image'], model_info['backbone'], fpn=fpn, head=head, 
+                        num_categories=num_categories, weights=weights)
         return model
 
 
 class Model(torch.nn.Module):
-    def __init__(self, num_channels=3, multi_image=False, backbone=Backbone.SWIN, fpn=False, head=None, head_outputs=None, weights=None):
+    def __init__(self, num_channels=3, multi_image=False, backbone=Backbone.SWIN, fpn=False, head=None, num_categories=None, weights=None):
         """
         Initializes a model, based on desired imagery source and model components. This class can be used directly to
         create a randomly initialized model (if weights=None) or can be called from the Weights class to initialize a 
@@ -61,7 +63,7 @@ class Model(torch.nn.Module):
             backbone (Backbone): The architecture of the pretrained backbone. All image sources support SwinTransformer.
             fpn (bool): Whether or not to feed imagery through the pretrained Feature Pyramid Network after the backbone.
             head (Head): If specified, a randomly initialized head will be included in the model. 
-            head_outputs (int): If a Head is being returned as part of the model, must specify how many outputs are wanted.
+            num_categories (int): If a Head is being returned as part of the model, must specify how many outputs are wanted.
             weights (torch weights): Weights to be loaded into the model. Defaults to None (random initialization) unless 
                                     initialized using the Weights class.
         """
@@ -72,20 +74,22 @@ class Model(torch.nn.Module):
             raise ValueError("Invalid backbone.")
         if head and not isinstance(head, Head):
             raise ValueError("Invalid head.")
-        if head and (head_outputs is None):
-            raise ValueError("Must specify head_outputs if head is desired.")
+        if head and (num_categories is None):
+            raise ValueError("Must specify num_categories if head is desired.")
 
         self.backbone = self._initialize_backbone(num_channels, backbone, multi_image, weights)
         self.fpn = self._initialize_fpn(self.backbone.out_channels, weights) if fpn else None
         if head:
-            self.head = self._initialize_head(head, self.fpn.out_channels) if fpn else self._initialize_head(head, self.backbone.out_channels)
+            self.head = self._initialize_head(head, self.fpn.out_channels, num_categories) if fpn else self._initialize_head(head, self.backbone.out_channels, num_categories)
         else:
             self.head = None
 
     def _initialize_backbone(self, num_channels, backbone_arch, multi_image, weights):
         # Load backbone model according to specified architecture.
-        if backbone_arch == Backbone.SWIN:
-            backbone = SwinBackbone(num_channels)
+        if backbone_arch == Backbone.SWINB:
+            backbone = SwinBackbone(num_channels, arch='swinb')
+        elif backbone_arch == Backbone.SWINT:
+            backbone = SwinBackbone(num_channels, arch='swint')
         elif backbone_arch == Backbone.RESNET50:
             backbone = ResnetBackbone(num_channels, arch='resnet50')
         elif backbone_arch == Backbone.RESNET152:
@@ -117,22 +121,22 @@ class Model(torch.nn.Module):
             fpn.load_state_dict(state_dict)
         return fpn
 
-    def _initialize_head(self, head, backbone_channels):
+    def _initialize_head(self, head, backbone_channels, num_categories):
         # Initialize the head (classification, detection, etc.) if specified
         if head == Head.CLASSIFY:
-            return SimpleHead('classification', backbone_channels)
+            return SimpleHead('classification', backbone_channels, num_categories)
         elif head == Head.MULTICLASSIFY:
-            return SimpleHead('multi-label-classification', backbone_channels)
+            return SimpleHead('multi-label-classification', backbone_channels, num_categories)
         elif head == Head.SEGMENT:
-            return SimpleHead('segment', backbone_channels)
+            return SimpleHead('segment', backbone_channels, num_categories)
         elif head == Head.BINSEGMENT:
-            return SimpleHead('bin_segment', backbone_channels)
+            return SimpleHead('bin_segment', backbone_channels, num_categories)
         elif head == Head.REGRESS:
-            return SimpleHead('regress', backbone_channels)
+            return SimpleHead('regress', backbone_channels, num_categories)
         elif head == Head.DETECT:
-            return FRCNNHead('detect', backbone_channels)
+            return FRCNNHead('detect', backbone_channels, num_categories)
         elif head == Head.INSTANCE:
-            return FRCNNHead('instance', backbone_channels)
+            return FRCNNHead('instance', backbone_channels, num_categories)
         return None
 
     def forward(self, imgs, targets=None):
@@ -174,7 +178,7 @@ if __name__ == "__main__":
         model_info = SatlasPretrain_weights[model_id]
         for head in Head:
             print("Attempting to load ...", model_id, " with pretrained FPN and randomly initialized ", head, " Head.")
-            model = weights_manager.get_pretrained_model(model_id, fpn=True, head=head, head_outputs=2)
+            model = weights_manager.get_pretrained_model(model_id, fpn=True, head=head, num_categories=2)
             rand_img = torch.rand((1, model_info['num_channels'], 128, 128))
 
             rand_targets = None
@@ -191,7 +195,3 @@ if __name__ == "__main__":
                     }]
             output = model(rand_img, rand_targets)
             print("Successfully initialized the pretrained model with ID:", model_id, " with FPN and randomly initialized ", head, " Head.") 
-
-
-    #model = weights_manager.get_pretrained_model('Sentinel2_SwinB_SI_RGB')
-    #model = Model(num_channels=3, backbone=Backbone.SWIN, fpn=True, head=Head.CLASSIFY, weights=None)

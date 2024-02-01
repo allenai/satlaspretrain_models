@@ -28,14 +28,14 @@ class NoopTransform(torch.nn.Module):
 
 
 class FRCNNHead(torch.nn.Module):
-    def __init__(self, task, backbone_channels, num_outputs=2):
+    def __init__(self, task, backbone_channels, num_categories=2):
         super(FRCNNHead, self).__init__()
 
         self.task_type = task
         self.use_layers = list(range(len(backbone_channels)))
         num_channels = backbone_channels[self.use_layers[0]][1]
         featmap_names = ['feat{}'.format(i) for i in range(len(self.use_layers))]
-        num_classes = num_outputs
+        num_classes = num_categories
 
         self.noop_transform = NoopTransform()
 
@@ -121,14 +121,14 @@ class FRCNNHead(torch.nn.Module):
 
 
 class SimpleHead(torch.nn.Module):
-    def __init__(self, task, backbone_channels, num_outputs=2):
+    def __init__(self, task, backbone_channels, num_categories=2):
         super(SimpleHead, self).__init__()
 
         self.task_type = task 
 
         use_channels = backbone_channels[0][1]
         num_layers = 2
-        self.num_outputs = num_outputs
+        self.num_outputs = num_categories
         if self.num_outputs is None:
             if task_type == 'regress':
                 self.num_outputs = 1
