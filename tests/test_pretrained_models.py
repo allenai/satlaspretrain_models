@@ -31,7 +31,7 @@ def test_pretrained_backbone_with_fpn(weights_manager, model_id):
 @pytest.mark.parametrize("model_id,head", [(model_id, head) for model_id in SatlasPretrain_weights.keys() for head in Head])
 def test_pretrained_backbone_with_fpn_and_head(weights_manager, model_id, head):
     model_info = SatlasPretrain_weights[model_id]
-    model = weights_manager.get_pretrained_model(model_id, fpn=True, head=head)
+    model = weights_manager.get_pretrained_model(model_id, fpn=True, head=head, head_outputs=2)
     rand_img = torch.rand((1, model_info['num_channels'], 128, 128))
 
     rand_targets = None

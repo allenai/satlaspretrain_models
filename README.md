@@ -5,8 +5,8 @@ SatlasPretrain Models: Foundation models for satellite and aerial imagery.
 was published at ICCV 2023. Details and download links for the dataset can be found 
 [here](https://github.com/allenai/satlas/blob/main/SatlasPretrain.md).
 
-This repo contains code to easily load pretrained SatlasPretrain models. There are models for **Sentinel-2, 
-Sentinel-1, and Landsat satellite imagery, as well as for 0.5-2 m/pixel aerial imagery.**
+This repo contains code to easily load pretrained SatlasPretrain models. There are models for Sentinel-2, 
+Sentinel-1, and Landsat satellite imagery, as well as for 0.5-2 m/pixel aerial imagery.
 These models can be fine-tuned to downstream tasks that use those image sources, and improve performance compared to 
 training from scratch.
 
@@ -37,7 +37,7 @@ The following randomly initialized heads are available:
 
 Available Pretrained Models
 ----------------------------
-Sentinel-2 Pretrained Models
+## Sentinel-2 Pretrained Models
 | Configuration | Swin-v2-Base | Swin-v2-Tiny | Resnet50 | Resnet152 |
 | ---------- | ------------ | ------------ | -------- | --------- |
 | Single-image, RGB | Sentinel2_SwinB_SI_RGB | Sentinel2_SwinT_SI_RGB | Sentinel2_Resnet50_SI_RGB | Sentinel2_Resnet152_SI_RGB |
@@ -45,19 +45,19 @@ Sentinel-2 Pretrained Models
 | Multi-image, RGB | Sentinel2_SwinB_MI_RGB | unavailable | Sentinel2_Resnet50_MI_RGB | Sentinel2_Resnet152_MI_RGB |
 | Multi-image, MS | Sentinel2_SwinB_MI_MS | unavailable | unavailable | unavailable |
 
-Sentinel-1 Pretrained Models
+## Sentinel-1 Pretrained Models
 | Configuration | Swin-v2-Base | Swin-v2-Tiny | Resnet50 | Resnet152 |
 | ---------- | ------------ | ------------ | -------- | --------- |
 | Single-image, vh+vv | Sentinel1_SwinB_SI | unavailable | unavailable | unavailable |
 | Multi-image, vh+vv | Sentinel1_SwinB_MI | unavailable | unavailable | unavailable |
 
-Landsat 8/9 Pretrained Models
+## Landsat 8/9 Pretrained Models
 | Configuration | Swin-v2-Base | Swin-v2-Tiny | Resnet50 | Resnet152 |
 | ---------- | ------------ | ------------ | -------- | --------- |
 | Single-image, all bands | Landsat_SwinB_SI | unavailable | unavailable | unavailable |
 | Multi-image, all bands | Landsat_SwinB_MI | unavailable | unavailable | unavailable |
 
-Aerial (0.5-2m/px high-res imagery) Pretrained Models
+## Aerial (0.5-2m/px high-res imagery) Pretrained Models
 | Configuration | Swin-v2-Base | Swin-v2-Tiny | Resnet50 | Resnet152 |
 | ---------- | ------------ | ------------ | -------- | --------- |
 | Single-image, RGB | Aerial_SwinB_SI | unavailable | unavailable | unavailable |
@@ -68,8 +68,10 @@ Single-image models learn strong representations for individual satellite or aer
 
 Sentinel-2 RGB models input B2, B3, and B4 only, while the multi-spectral (MS) models input 9 bands (see [Normalization.md](Normalization.md#sentinel-2-images) for details). The aerial (0.5-2m/px high-res imagery) models input RGB NAIP and other high-res images, and we have found them to be effective on aerial imagery from a variety of sources and datasets. Landsat models input B1-B11 (all bands). Sentinel-1 models input the VV and VH bands. 
 
-Usage Examples
+Pretrained Model Examples
 ---------------
+
+
 To load a pretrained single-image Sentinel-2 backbone model:
 ```
 import satlaspretrain_models
