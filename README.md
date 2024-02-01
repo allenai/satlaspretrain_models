@@ -79,8 +79,8 @@ Sentinel-2 *RGB* models input the B2, B3, and B4 bands only, while the multi-spe
 
 Pretrained Model Examples
 ---------------
-Choose a **model_id** from one of the tables above to specify the pretrained model you want to load. Below are a 
-few examples showing how to load in a few of the available models.
+Choose a **model_id** from one of the Available Pretrained Models model_ids tables to specify the pretrained model you want to load. Below are
+examples showing how to load in a few of the available models.
 
 To load a pretrained single-image Sentinel-2 backbone model:
 ```
@@ -130,12 +130,13 @@ To load a randomly initialized single-image RGB Sentinel-2 backbone + FPN + segm
 ```
 import satlaspretrain_models
 
-model = Model(num_channels=3, multi_image=False, backbone=backbone, fpn=True, head=satlaspretrain_models.Head.SEGMENT, head_outputs=2, weights=None) 
+model = Model(num_channels=3, multi_image=False, backbone=satlaspretrain_models.Backbone.SWIN, 
+		fpn=True, head=satlaspretrain_models.Head.SEGMENT, head_outputs=2, weights=None) 
 ```
 
 Tests
 -----
-There are two `pytest` files in the `tests/` directory, one to test loading pretrained models and one to test randomly initialized models.
+There are tests to test loading pretrained models and one to test randomly initialized models.
 
 To run the tests, run the following command from the root directory:
 `pytest tests/`
