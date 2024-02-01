@@ -25,7 +25,7 @@ class SwinBackbone(torch.nn.Module):
 
 
 class ResnetBackbone(torch.nn.Module):
-    def __init__(self, num_channels, arch):
+    def __init__(self, num_channels, arch='resnet50'):
         super(ResnetBackbone, self).__init__()
 
         if arch == 'resnet50':

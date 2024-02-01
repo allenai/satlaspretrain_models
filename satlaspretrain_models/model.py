@@ -87,9 +87,9 @@ class Model(torch.nn.Module):
         if backbone_arch == Backbone.SWIN:
             backbone = SwinBackbone(num_channels)
         elif backbone_arch == Backbone.RESNET50:
-            backbone = ResNetBackbone(num_channels)
+            backbone = ResnetBackbone(num_channels, arch='resnet50')
         elif backbone_arch == Backbone.RESNET152:
-            backbone = ResNetBackbone(num_channels)
+            backbone = ResnetBackbone(num_channels, arch='resnet152')
         else:
             raise ValueError("Unsupported backbone architecture.")
         

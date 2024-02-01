@@ -16,7 +16,7 @@ def test_pretrained_backbone(weights_manager, model_id):
     model = weights_manager.get_pretrained_model(model_id)
     rand_img = torch.rand((8, model_info['num_channels'], 128, 128))
     output = model(rand_img)
-    assert output is not None  # Add appropriate assertion based on your output
+    assert output is not None
 
 # Test loading pretrained backbone models with FPN, without Head
 @pytest.mark.parametrize("model_id", SatlasPretrain_weights.keys())
@@ -25,7 +25,7 @@ def test_pretrained_backbone_with_fpn(weights_manager, model_id):
     model = weights_manager.get_pretrained_model(model_id, fpn=True)
     rand_img = torch.rand((8, model_info['num_channels'], 128, 128))
     output = model(rand_img)
-    assert output is not None  # Add appropriate assertion based on your output
+    assert output is not None
 
 # Test loading pretrained backbones with FPN and every possible Head
 @pytest.mark.parametrize("model_id,head", [(model_id, head) for model_id in SatlasPretrain_weights.keys() for head in Head])
@@ -48,5 +48,5 @@ def test_pretrained_backbone_with_fpn_and_head(weights_manager, model_id, head):
         }]
     
     output = model(rand_img, rand_targets) if rand_targets else model(rand_img)
-    assert output is not None  # Add appropriate assertion based on your output
+    assert output is not None
 
