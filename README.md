@@ -79,59 +79,85 @@ Sentinel-2 *RGB* models input the B2, B3, and B4 bands only, while the multi-spe
 
 Pretrained Model Examples
 ---------------
-Choose a **model_id** from one of the Available Pretrained Models model_ids tables to specify the pretrained model you want to load. Below are
-examples showing how to load in a few of the available models.
+First initialize a `Weights` instance:
 
-To load a pretrained single-image Sentinel-2 backbone model:
-```
+```python
 import satlaspretrain_models
-
-# This example loads a Swin-v2-Base single-image model that was pretrained on Sentinel-2 RGB images.
-model_id = 'Sentinel2_SwinB_SI_RGB'
-
+import torch
 weights_manager = satlaspretrain_models.Weights()
-model = weights_manager.get_pretrained_model(model_id)
 ```
 
-To load a pretrained single-image Sentinel-1 backbone + FPN:
-```
-import satlaspretrain_models
+Then choose a **model_identifier** from the tables above to specify the pretrained model you want to load.
+Below are examples showing how to load in a few of the available models.
 
-# This example loads a Swin-v2-Base single-image model that was pretrained on Sentinel-1 images.
-model_id = 'Sentinel1_SwinB_SI'
+#### Pretrained single-image Sentinel-2 RGB model, backbone only:
+```python
+model = weights_manager.get_pretrained_model(model_identifier="Sentinel2_SwinB_SI_RGB")
 
-weights_manager = satlaspretrain_models.Weights()
-model = weights_manager.get_pretrained_model(model_id, fpn=True)
-```
+# Expected input is a portion of a Sentinel-2 L1C TCI image.
+# The 0-255 pixel values should be divided by 255 so they are 0-1.
+# tensor = tci_image[None, :, :, :] / 255
+tensor = torch.zeros((1, 3, 512, 512), dtype=torch.float32)
 
-To load a pretrained multi-image Aerial backbone + FPN and a randomly initialized classification head:
-```
-import satlaspretrain_models
-
-# This examples loads a Swin-v2-Base multi-image model that was pretrained on Aerial RGB images.
-model_id = 'Aerial_SwinB_MI'
-
-weights_manager = satlaspretrain_models.Weights()
-model = weights_manager.get_pretrained_model(model_id, fpn=True, head=satlaspretrain_models.Head.CLASSIFY, head_outputs)
+# Since we only loaded the backbone, it outputs feature maps from the Swin-v2-Base backbone.
+output = model(tensor)
+print([feature_map.shape for feature_map in output])
+# [torch.Size([1, 128, 128, 128]), torch.Size([1, 256, 64, 64]), torch.Size([1, 512, 32, 32]), torch.Size([1, 1024, 16, 16])]
 ```
 
-To load a pretrained multi-image Landsat 8/9 backbone + FPN and a randomly initialized detection head:
+#### Pretrained single-image Sentinel-1 model, backbone+FPN
+```python
+model = weights_manager.get_pretrained_model("Sentinel1_SwinB_SI", fpn=True)
+
+# Expected input is a portion of a Sentinel-1 vh+vv image (in that order).
+# The 16-bit pixel values should be divided by 255 and clipped to 0-1 (any pixel values greater than 255 become 1).
+# tensor = torch.clip(torch.stack([vh_image, vv_image], dim=0)[None, :, :, :] / 255, 0, 1)
+tensor = torch.zeros((1, 2, 512, 512), dtype=torch.float32)
+
+# The model outputs feature maps from the FPN.
+output = model(tensor)
+print([feature_map.shape for feature_map in output])
+# [torch.Size([1, 128, 128, 128]), torch.Size([1, 128, 64, 64]), torch.Size([1, 128, 32, 32]), torch.Size([1, 128, 16, 16])]
 ```
-import satlaspretrain_models
 
-# This examples loads a Swin-v2-Base multi-image model that was pretrained on Landsat 8/9 images.
-model_id = 'Landsat_SwinB_MI'
+#### Pretrained multi-image aerial model, backbone + FPN + classification head:
+```python
+# head_outputs is the number of categories to predict.
+# All heads are randomly initialized and provided only for convenience for fine-tuning.
+model = weights_manager.get_pretrained_model("Aerial_SwinB_MI", fpn=True, head=satlaspretrain_models.Head.CLASSIFY, head_outputs=2)
 
-weights_manager = satlaspretrain_models.Weights()
-model = weights_manager.get_pretrained_model(model_id, fpn=True, head=satlaspretrain_models.Head.DETECT, head_outputs=2)
+# Expected input is 8-bit (0-255) aerial imagery at 0.5 - 2 m/pixel.
+# The 0-255 pixel values should be divided by 255 so they are 0-1.
+# tensor = rgb_image[None, :, :, :] / 255
+tensor = torch.zeros((1, 3, 512, 512), dtype=torch.float32)
+
+# The head needs to be fine-tuned on a downstream classification task.
+# It outputs classification probabilities.
+model.eval()
+output = model(tensor)
+print(output)
+# tensor([[0.0266, 0.9734]])
 ```
 
-To load a randomly initialized single-image RGB Sentinel-2 backbone + FPN + segmentation head:
-```
-import satlaspretrain_models
+#### Pretrained multi-image Landsat model, backbone + FPN + detection head
+```python
+# head_outputs is the number of bounding box detection categories.
+# All heads are randomly initialized and provided only for convenience for fine-tuning.
+model = weights_manager.get_pretrained_model("Landsat_SwinB_MI", fpn=True, head=satlaspretrain_models.Head.DETECT, head_outputs=5)
 
-model = Model(num_channels=3, multi_image=False, backbone=satlaspretrain_models.Backbone.SWIN, 
-		fpn=True, head=satlaspretrain_models.Head.SEGMENT, head_outputs=2, weights=None) 
+# Expected input is Landsat B1-B11 stacked in order.
+# The 16-bit pixel values are normalized as follows:
+# tensor = torch.clip(landsat_image[None, :, :, :]-4000)/16320, 0, 1)
+tensor = torch.zeros((1, 11, 512, 512), dtype=torch.float32)
+
+# The head needs to be fine-tuned on a downstream object detection task.
+# It outputs bounding box detections.
+model.eval()
+output = model(tensor)
+print(output)
+#[{'boxes': tensor([[ 67.0772, 239.2646, 95.6874, 16.3644], ...]),
+# 'labels': tensor([3, ...]),
+# 'scores': tensor([0.5443, ...])}]
 ```
 
 Tests
