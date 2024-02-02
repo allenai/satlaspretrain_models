@@ -47,27 +47,33 @@ pip install satlaspretrain_models
 Available Pretrained Models model_ids
 ----------------------------
 #### Sentinel-2 Pretrained Models
-|  | Single-image, RGB | Single-image, MS | Multi-image, RGB | Multi-image, MS |
+|  | Single-image, RGB | Multi-image, RGB |
 | ---------- | ------------ | ------------ | -------- | --------- |
-| Swin-v2-Base | Sentinel2_SwinB_SI_RGB | Sentinel2_SwinB_SI_MS | Sentinel2_SwinB_MI_RGB | Sentinel2_SwinB_MI_MS |
-| Swin-v2-Tiny | Sentinel2_SwinT_SI_RGB | | | |
-| Resnet50 | Sentinel2_Resnet50_SI_RGB | Sentinel2_Resnet50_SI_MS | Sentinel2_Resnet50_MI_RGB | | 
-| Resnet152 | Sentinel2_Resnet152_SI_RGB | Sentinel2_Resnet152_SI_MS | Sentinel2_Resnet152_MI_RGB | |
+| **Swin-v2-Base** | [Sentinel2_SwinB_SI_RGB](https://huggingface.co/allenai/satlas-pretrain/resolve/main/sentinel2_swinb_si_rgb.pth?download=true) | [Sentinel2_SwinB_MI_RGB](https://huggingface.co/allenai/satlas-pretrain/resolve/main/sentinel2_swinb_mi_rgb.pth?download=true) |
+| **Swin-v2-Tiny** | [Sentinel2_SwinT_SI_RGB](https://huggingface.co/allenai/satlas-pretrain/resolve/main/sentinel2_swint_si_rgb.pth?download=true) | |
+| **Resnet50** | [Sentinel2_Resnet50_SI_RGB](https://huggingface.co/allenai/satlas-pretrain/resolve/main/sentinel2_resnet50_si_rgb.pth?download=true) | [Sentinel2_Resnet50_MI_RGB](https://huggingface.co/allenai/satlas-pretrain/resolve/main/sentinel2_resnet50_mi_rgb.pth?download=true) |
+| **Resnet152** | [Sentinel2_Resnet152_SI_RGB](https://huggingface.co/allenai/satlas-pretrain/resolve/main/sentinel2_resnet152_si_rgb.pth?download=true) | [Sentinel2_Resnet152_MI_RGB](https://huggingface.co/allenai/satlas-pretrain/resolve/main/sentinel2_resnet152_mi_rgb.pth?download=true) |
+
+|  | Single-image, MS | Multi-image, MS |
+| ---------- | ------------ | ------------ | -------- | --------- |
+| **Swin-v2-Base** | [Sentinel2_SwinB_SI_MS](https://huggingface.co/allenai/satlas-pretrain/resolve/main/sentinel2_swinb_si_ms.pth?download=true) | [Sentinel2_SwinB_MI_MS](https://huggingface.co/allenai/satlas-pretrain/resolve/main/sentinel2_swinb_mi_ms.pth?download=true) |
+| **Resnet50** | [Sentinel2_Resnet50_SI_MS](https://huggingface.co/allenai/satlas-pretrain/resolve/main/sentinel2_swint_si_ms.pth?download=true) | |
+| **Resnet152** | [Sentinel2_Resnet152_SI_MS](https://huggingface.co/allenai/satlas-pretrain/resolve/main/sentinel2_resnet152_si_ms.pth?download=true) | |
 
 #### Sentinel-1 Pretrained Models
 |  | Single-image, VH+VV | Multi-image, VH+VV |
 | ---------- | ------------ | ------------ |
-| Swin-v2-Base | Sentinel1_SwinB_SI | Sentinel1_SwinB_MI | 
+| **Swin-v2-Base** | [Sentinel1_SwinB_SI](https://huggingface.co/allenai/satlas-pretrain/resolve/main/sentinel1_swinb_si.pth?download=true) | [Sentinel1_SwinB_MI](https://huggingface.co/allenai/satlas-pretrain/resolve/main/sentinel1_swinb_mi.pth?download=true) | 
 
 #### Landsat 8/9 Pretrained Models
 |  | Single-image, all bands | Multi-image, all bands |
 | ---------- | ------------ | ------------ |
-| Swin-v2-Base | Landsat_SwinB_SI | Landsat_SwinB_MI |
+| **Swin-v2-Base** | [Landsat_SwinB_SI](https://huggingface.co/allenai/satlas-pretrain/resolve/main/landsat_swinb_si.pth?download=true) | [Landsat_SwinB_MI](https://huggingface.co/allenai/satlas-pretrain/resolve/main/landsat_swinb_mi.pth?download=true) |
 
 #### Aerial (0.5-2m/px high-res imagery) Pretrained Models
 |  | Single-image, RGB | Multi-image, RGB |
 | ---------- | ------------ | ------------ |
-| Swin-v2-Base | Aerial_SwinB_SI | Aerial_SwinB_MI |
+| **Swin-v2-Base** | [Aerial_SwinB_SI](https://huggingface.co/allenai/satlas-pretrain/resolve/main/aerial_swinb_si.pth?download=true) | [Aerial_SwinB_MI](https://huggingface.co/allenai/satlas-pretrain/resolve/main/aerial_swinb_mi.pth?download=true) |
 
 
 *Single-image* models learn strong representations for individual satellite or aerial images, while *multi-image* models use multiple image captures of the same location for added robustness when making predictions about static objects. In *multi-image* models, feature maps from the backbone are passed through temporal max pooling, so the backbone itself is still applied on individual images, but is trained to provide strong representations after the temporal max pooling step. See [ModelArchitecture.md](ModelArchitecture.md) for more details.
