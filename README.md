@@ -151,9 +151,9 @@ The following head architectures are available:
 
 #### Pretrained multi-image aerial model, backbone + FPN + classification head:
 ```python
-# head_outputs is the number of categories to predict.
+# num_categories is the number of categories to predict.
 # All heads are randomly initialized and provided only for convenience for fine-tuning.
-model = weights_manager.get_pretrained_model("Aerial_SwinB_MI", fpn=True, head=satlaspretrain_models.Head.CLASSIFY, head_outputs=2)
+model = weights_manager.get_pretrained_model("Aerial_SwinB_MI", fpn=True, head=satlaspretrain_models.Head.CLASSIFY, num_categories=2)
 
 # Expected input is 8-bit (0-255) aerial images at 0.5 - 2 m/pixel.
 # The 0-255 pixel values should be divided by 255 so they are 0-1.
@@ -171,9 +171,9 @@ print(output)
 
 #### Pretrained multi-image Landsat model, backbone + FPN + detection head
 ```python
-# head_outputs is the number of bounding box detection categories.
+# num_categories is the number of bounding box detection categories.
 # All heads are randomly initialized and provided only for convenience for fine-tuning.
-model = weights_manager.get_pretrained_model("Landsat_SwinB_MI", fpn=True, head=satlaspretrain_models.Head.DETECT, head_outputs=5)
+model = weights_manager.get_pretrained_model("Landsat_SwinB_MI", fpn=True, head=satlaspretrain_models.Head.DETECT, num_categories=5)
 
 # Expected input is Landsat B1-B11 stacked in order.
 # This multi-image model is trained to input 8 images but should perform well with different numbers of images.
