@@ -15,10 +15,6 @@ These models can be fine-tuned on downstream tasks that use these image sources,
 and improved performance compared to training from other initializations
 (our experiments show an accuracy improvement of 18% over ImageNet and 6% over [iSAID](https://captain-whu.github.io/iSAID/)).
 
-For a complete fine-tuning example, [see our tutorial on fine-tuning the pre-trained model on XYZ](TODO1) (link TODO1).
-
-You can also use the pre-trained models in [TorchGeo](TODO2) (link TODO2), a library for training remote sensing models in PyTorch. [See our usage guide.](TODO2)
-
 Model Structure and Usage
 -------------------------
 The SatlasPretrain models consist of three main components: backbone, feature pyramid network (FPN), and prediction head.
@@ -37,24 +33,6 @@ model = weights_manager.get_pretrained_model(MODEL_CHECKPOINT_ID, fpn=True)
 ```
 
 The output of the model is the multi-scale feature map (either from the backbone or from the FPN).
-
-Although the checkpoints include prediction head parameters, these heads are task-specific, so loading the head parameters is not supported in this repository.
-Computing outputs from the pre-trained prediction heads is supported [in the dataset codebase](https://github.com/allenai/satlas/blob/main/SatlasPretrain.md#visualizing-outputs-on-new-images).
-
-For convenience when fine-tuning on certain types of tasks, though, we support attaching certain heads (initialized randomly) to the pre-trained model:
-
-```python
-# Backbone and FPN parameters initialized from checkpoint, head parameters initialized randomly.
-model = weights_manager.get_pretrained_model(MODEL_CHECKPOINT_ID, fpn=True, head=satlaspretrain_models.Head.CLASSIFY, head_outputs=2)
-```
-
-The following head architectures are available:
-- *Segmentation*: U-Net Decoder w/ Cross Entropy loss
-- *Detection*: Faster R-CNN Decoder
-- *Instance Segmentation*: Mask R-CNN Decoder
-- *Regression*: U-Net Decoder w/ L1 loss
-- *Classification*: Pooling + Linear layers
-- *Multi-label Classification*: Pooling + Linear layers
 
 Installation
 --------------
@@ -117,6 +95,8 @@ weights_manager = satlaspretrain_models.Weights()
 
 Then choose a **model_identifier** from the tables above to specify the pretrained model you want to load.
 Below are examples showing how to load in a few of the available models.
+For a complete fine-tuning example, [see our tutorial on fine-tuning the pre-trained model on XYZ](TODO1) (link TODO1).
+You can also use the pre-trained models in [TorchGeo](TODO2) (link TODO2), a library for training remote sensing models in PyTorch ([see our usage guide](TODO2)).
 
 #### Pretrained single-image Sentinel-2 RGB model, backbone only:
 ```python
@@ -147,6 +127,26 @@ output = model(tensor)
 print([feature_map.shape for feature_map in output])
 # [torch.Size([1, 128, 128, 128]), torch.Size([1, 128, 64, 64]), torch.Size([1, 128, 32, 32]), torch.Size([1, 128, 16, 16])]
 ```
+
+#### Prediction heads
+
+Although the checkpoints include prediction head parameters, these heads are task-specific, so loading the head parameters is not supported in this repository.
+Computing outputs from the pre-trained prediction heads is supported [in the dataset codebase](https://github.com/allenai/satlas/blob/main/SatlasPretrain.md#visualizing-outputs-on-new-images).
+
+For convenience when fine-tuning on certain types of tasks, though, `satlaspretrain_models` supports attaching certain heads (initialized randomly) to the pre-trained model:
+
+```python
+# Backbone and FPN parameters initialized from checkpoint, head parameters initialized randomly.
+model = weights_manager.get_pretrained_model(MODEL_CHECKPOINT_ID, fpn=True, head=satlaspretrain_models.Head.CLASSIFY, head_outputs=2)
+```
+
+The following head architectures are available:
+- *Segmentation*: U-Net Decoder w/ Cross Entropy loss
+- *Detection*: Faster R-CNN Decoder
+- *Instance Segmentation*: Mask R-CNN Decoder
+- *Regression*: U-Net Decoder w/ L1 loss
+- *Classification*: Pooling + Linear layers
+- *Multi-label Classification*: Pooling + Linear layers
 
 #### Pretrained multi-image aerial model, backbone + FPN + classification head:
 ```python
