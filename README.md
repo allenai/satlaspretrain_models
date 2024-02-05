@@ -105,8 +105,8 @@ This package will download model checkpoints automatically, but you can download
 Sentinel-2 *RGB* models input the B4, B3, and B2 bands only, while the multi-spectral (*MS*) models input 9 bands. The aerial (0.5-2m/px high-res imagery) models input *RGB* NAIP and other high-res images, and we have found them to be effective on aerial imagery from a variety of sources. Landsat models input B1-B11 (*all bands*). Sentinel-1 models input *VV and VH* bands.
 See [Normalization.md](https://github.com/allenai/satlas/blob/main/Normalization.md) for details on how pixel values should be normalized for input to the pre-trained models.
 
-Pretrained Model Examples
--------------------------
+Usage Examples
+--------------
 First initialize a `Weights` instance:
 
 ```python
