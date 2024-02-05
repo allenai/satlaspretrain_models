@@ -12,8 +12,7 @@ This repository contains `satlaspretrain_models`, a lightweight library to easil
 - 0.5-2 m/pixel aerial imagery
 
 These models can be fine-tuned on downstream tasks that use these image sources, leading to faster training
-and improved performance compared to training from other initializations
-(our experiments show an accuracy improvement of 18% over ImageNet and 6% over [iSAID](https://captain-whu.github.io/iSAID/)).
+and improved performance compared to training from other initializations.
 
 Model Structure and Usage
 -------------------------
