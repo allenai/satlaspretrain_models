@@ -33,6 +33,9 @@ model = weights_manager.get_pretrained_model(MODEL_CHECKPOINT_ID, fpn=True)
 
 The output of the model is the multi-scale feature map (either from the backbone or from the FPN).
 
+For a complete fine-tuning example, [see our tutorial on fine-tuning the pre-trained model on XYZ](TODO1) (link TODO1).
+You can also use the pre-trained models in [TorchGeo](TODO2) (link TODO2), a library for training remote sensing models in PyTorch ([see our usage guide](TODO2)).
+
 Installation
 --------------
 ```
@@ -94,8 +97,6 @@ weights_manager = satlaspretrain_models.Weights()
 
 Then choose a **model_identifier** from the tables above to specify the pretrained model you want to load.
 Below are examples showing how to load in a few of the available models.
-For a complete fine-tuning example, [see our tutorial on fine-tuning the pre-trained model on XYZ](TODO1) (link TODO1).
-You can also use the pre-trained models in [TorchGeo](TODO2) (link TODO2), a library for training remote sensing models in PyTorch ([see our usage guide](TODO2)).
 
 #### Pretrained single-image Sentinel-2 RGB model, backbone only:
 ```python
