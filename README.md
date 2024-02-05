@@ -47,7 +47,8 @@ pip install satlaspretrain_models
 Available Pretrained Models
 ---------------------------
 
-The tables below list available model checkpoint IDs.
+The tables below list available model checkpoint IDs (like `Sentinel2_SwinB_SI_RGB`).
+Checkpoints are released under [ODC-BY](https://github.com/allenai/satlas/blob/main/DataLicense).
 This package will download model checkpoints automatically, but you can download them directly using the links below if desired.
 
 #### Sentinel-2 Pretrained Models
