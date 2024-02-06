@@ -39,5 +39,5 @@ def test_random_backbone_with_fpn_and_head(backbone, head):
             'masks': torch.zeros_like(rand_img)
         }]
 
-    output = model(rand_img, rand_targets) if rand_targets else model(rand_img)
-    assert output is not None
+    output, loss = model(rand_img, rand_targets) if rand_targets else model(rand_img)
+    assert output is not None and loss is not None
