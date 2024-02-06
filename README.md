@@ -34,14 +34,13 @@ model = weights_manager.get_pretrained_model(MODEL_CHECKPOINT_ID, fpn=True)
 The output of the model is the multi-scale feature map (either from the backbone or from the FPN).
 
 For a complete fine-tuning example, [see our tutorial on fine-tuning the pre-trained model on EuroSAT](https://github.com/allenai/satlaspretrain_models/blob/main/demo.ipynb).
-You can also use the pre-trained models in [TorchGeo](TODO2) (link TODO2), a library for training remote sensing models in PyTorch ([see our usage guide](TODO2)).
 
 Installation
 --------------
 ```
 conda create --name satlaspretrain python==3.9
 conda activate satlaspretrain
-pip install satlaspretrain_models
+pip install satlaspretrain-models
 ```
 
 Available Pretrained Models
@@ -138,7 +137,7 @@ For convenience when fine-tuning on certain types of tasks, though, `satlaspretr
 
 ```python
 # Backbone and FPN parameters initialized from checkpoint, head parameters initialized randomly.
-model = weights_manager.get_pretrained_model(MODEL_CHECKPOINT_ID, fpn=True, head=satlaspretrain_models.Head.CLASSIFY, head_outputs=2)
+model = weights_manager.get_pretrained_model(MODEL_CHECKPOINT_ID, fpn=True, head=satlaspretrain_models.Head.CLASSIFY, num_categories=2)
 ```
 
 The following head architectures are available:
@@ -194,7 +193,7 @@ print(output)
 
 Demos
 -----
-We provide a [demo](https://github.com/allenai/satlaspretrain_models/blob/main/demo.py) showing how to finetune a 
+We provide a [demo](https://github.com/allenai/satlaspretrain_models/blob/main/demo.ipynb) showing how to finetune a 
 SatlasPretrain Sentinel-2 model on the EuroSAT classification task.
 
 Tests

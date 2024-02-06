@@ -176,21 +176,16 @@ class SimpleHead(torch.nn.Module):
             outputs = torch.nn.functional.softmax(raw_outputs, dim=1)
 
             if targets is not None:
-                task_targets = torch.stack([target['im'] for target in targets], dim=0)
-                task_valid = torch.stack([target['valid_im'] for target in targets], dim=0)
-
-                loss = self.loss_func(raw_outputs, task_targets.long()) * task_valid
+                task_targets = torch.stack([target for target in targets], dim=0)
+                loss = self.loss_func(raw_outputs, task_targets.long())
                 loss = loss.mean()
 
         elif self.task_type == 'bin_segment':
             outputs = torch.nn.functional.softmax(raw_outputs, dim=1)
 
             if targets is not None:
-                task_targets = torch.stack([target['im'] for target in targets], dim=0)
-                task_valid = torch.stack([target['valid_im'] for target in targets], dim=0)
-
+                task_targets = torch.stack([target for target in targets], dim=0)
                 loss = self.loss_func(raw_outputs, task_targets.float())
-                loss *= task_valid[:, None, :, :]
                 loss = loss.mean()
 
         elif self.task_type == 'regress':
@@ -198,10 +193,8 @@ class SimpleHead(torch.nn.Module):
             outputs = 255*raw_outputs
 
             if targets is not None:
-                task_targets = torch.stack([target['im'] for target in targets], dim=0)
-                task_valid = torch.stack([target['valid_im'] for target in targets], dim=0)
-
-                loss = self.loss_func(raw_outputs, task_targets.float()/255) * task_valid
+                task_targets = torch.stack([target for target in targets], dim=0)
+                loss = self.loss_func(raw_outputs, task_targets.float()/255)
                 loss = loss.mean()
 
         elif self.task_type == 'classification':
@@ -210,9 +203,8 @@ class SimpleHead(torch.nn.Module):
             outputs = torch.nn.functional.softmax(logits, dim=1)
 
             if targets is not None:
-                task_targets = torch.cat([target['label'] for target in targets], dim=0).to(torch.long)
-                task_valid = torch.stack([target['valid'] for target in targets], dim=0)
-                loss = self.loss_func(logits, task_targets) * task_valid
+                task_targets = targets.to(torch.long)
+                loss = self.loss_func(logits, task_targets)
                 loss = loss.mean()
 
         elif self.task_type == 'multi-label-classification':
@@ -221,9 +213,8 @@ class SimpleHead(torch.nn.Module):
             outputs = torch.sigmoid(logits)
 
             if targets is not None:
-                task_targets = torch.cat([target['labels'] for target in targets], dim=0).to(torch.float32)
-                task_valid = torch.stack([target['valid'] for target in targets], dim=0)
-                loss = self.loss_func(logits, task_targets) * task_valid
+                task_targets = torch.cat([target for target in targets], dim=0).to(torch.float32)
+                loss = self.loss_func(logits, task_targets)
                 loss = loss.mean()
 
         return outputs, loss
