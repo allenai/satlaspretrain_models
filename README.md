@@ -33,7 +33,7 @@ model = weights_manager.get_pretrained_model(MODEL_CHECKPOINT_ID, fpn=True)
 
 The output of the model is the multi-scale feature map (either from the backbone or from the FPN).
 
-For a complete fine-tuning example, [see our tutorial on fine-tuning the pre-trained model on XYZ](TODO1) (link TODO1).
+For a complete fine-tuning example, [see our tutorial on fine-tuning the pre-trained model on EuroSAT](https://github.com/allenai/satlaspretrain_models/blob/main/demo.ipynb).
 You can also use the pre-trained models in [TorchGeo](TODO2) (link TODO2), a library for training remote sensing models in PyTorch ([see our usage guide](TODO2)).
 
 Installation

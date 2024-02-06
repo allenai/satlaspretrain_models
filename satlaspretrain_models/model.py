@@ -13,7 +13,7 @@ class Weights:
         """
         super(Weights, self).__init__()
 
-    def get_pretrained_model(self, model_identifier, fpn=False, head=None, num_categories=None):
+    def get_pretrained_model(self, model_identifier, fpn=False, head=None, num_categories=None, device='cuda'):
         """
         Find and load pretrained SatlasPretrain weights, based on the model_identifier argument.
         Option to load pretrained FPN and/or a randomly initialized head.
@@ -42,7 +42,10 @@ class Weights:
         else: 
             raise Exception(f"Failed to download weights from {url}")
         
-        weights = torch.load(weights_file)
+        if device == 'cpu':
+            weights = torch.load(weights_file, map_location=torch.device('cpu'))
+        else:
+            weights = torch.load(weights_file)
 
         # Initialize a pretrained model using the Model() class.
         model = Model(model_info['num_channels'], model_info['multi_image'], model_info['backbone'], fpn=fpn, head=head, 
@@ -147,7 +150,8 @@ class Model(torch.nn.Module):
         if self.fpn:
             x = self.fpn(x)
         if self.head:
-            x, _ = self.head(imgs, x, targets)
+            x, loss = self.head(imgs, x, targets)
+            return x, loss
         return x
 
 
@@ -195,5 +199,5 @@ if __name__ == "__main__":
                         'labels': torch.tensor([0,1], dtype=torch.int64),
                         'masks': torch.zeros_like(rand_img)
                     }]
-            output = model(rand_img, rand_targets)
+            output, loss = model(rand_img, rand_targets)
             print("Successfully initialized the pretrained model with ID:", model_id, " with FPN and randomly initialized ", head, " Head.") 
