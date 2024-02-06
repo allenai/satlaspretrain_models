@@ -192,6 +192,11 @@ print(output)
 # 'scores': tensor([0.5443, ...])}]
 ```
 
+Demos
+-----
+We provide a [demo](https://github.com/allenai/satlaspretrain_models/blob/main/demo.py) showing how to finetune a 
+SatlasPretrain Sentinel-2 model on the EuroSAT classification task.
+
 Tests
 -----
 There are tests to test loading pretrained models and one to test randomly initialized models.

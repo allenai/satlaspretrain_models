@@ -1,3 +1,4 @@
+# This demostrates how to finetune a SatlasPretrain Sentinel-2 model on the EuroSAT classification task.
 import io
 import os
 import torch
@@ -8,6 +9,7 @@ import torchvision
 from torch.utils.data import Dataset, DataLoader
 
 import satlaspretrain_models
+
 
 # Only go through the downloading and unzipping process if it hasn't been done before.
 if not os.path.exists('EuroSAT_RGB/'):
@@ -60,18 +62,19 @@ class Dataset(Dataset):
     def __getitem__(self, idx):
         img_path, cls_int = self.datapoints[idx]
         img = torchvision.io.read_image(img_path)  # load image directly into a [3, 64, 64] tensor
+        img = img.float() / 255  # normalize input to be between 0-1
         target = torch.tensor(cls_int)  # convert class index into a torch tensor
-        return img.float(), target
+        return img, target
     
     def __len__(self):
         return len(self.datapoints)
 
 
 # Experiment arguments.
-device = torch.device('cpu')
-num_epochs = 1
+device = torch.device('cuda')
+num_epochs = 1000
 criterion = torch.nn.CrossEntropyLoss()
-val_step = 5  # evalaute every val_step epochs
+val_step = 10  # evalaute every val_step epochs
 
 # Initialize the train and validation datasets.
 train_dataset = Dataset('EuroSAT_RGB/')
@@ -80,25 +83,25 @@ val_dataset = Dataset('EuroSAT_RGB/', val=True)
 # Dataloaders.
 train_dataloader = DataLoader(
     train_dataset,
-    batch_size=8,
+    batch_size=16,
     shuffle=True,
-    num_workers=4,
-    drop_last=True
+    num_workers=16
 )
 val_dataloader = DataLoader(
     val_dataset,
-    batch_size=8,
+    batch_size=16,
     shuffle=False,
-    num_workers=4
+    num_workers=16
 )
 
 # Initialize a pretrained model, using the SatlasPretrain single-image Swin-v2-Base Sentinel-2 image model weights
 # with a classification head with num_categories=10, since EuroSAT has 10 classes.
 weights_manager = satlaspretrain_models.Weights()
 model = weights_manager.get_pretrained_model("Sentinel2_SwinB_SI_RGB", fpn=True, head=satlaspretrain_models.Head.CLASSIFY, num_categories=10)
+model = model.to(device)
 
 # Optimizer
-optimizer = torch.optim.Adam(model.parameters(), lr=0.005)
+optimizer = torch.optim.Adam(model.parameters(), lr=0.0001)
 
 # Training loop.
 for epoch in range(num_epochs):
@@ -107,19 +110,26 @@ for epoch in range(num_epochs):
     for data, target in train_dataloader:
         data = data.to(device)
         target = target.to(device)
-        print(data.shape, target)
 
         output = model(data)
-        predicted_cls = torch.argmax(output)
-        print(output.shape, predicted_cls)
 
         loss = criterion(output, target)
+        print("Train Loss = ", loss)
 
         loss.backward()
         optimizer.step()
 
-
     if epoch % val_step == 0:
         model.eval()
 
-        # TODO: add eval code here
+        for val_data, val_target in val_dataloader:
+            val_data = val_data.to(device)
+            val_target = val_target.to(device)
+
+            val_output = model(val_data)
+
+            val_loss = criterion(val_output, val_target)
+            val_accuracy = (val_output.argmax(dim=1) == val_target).float().mean().item()
+
+            print("Validation accuracy = ", val_accuracy)
+
