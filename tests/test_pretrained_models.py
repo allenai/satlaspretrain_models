@@ -14,7 +14,7 @@ def weights_manager():
 def test_pretrained_backbone(weights_manager, model_id):
     model_info = SatlasPretrain_weights[model_id]
     model = weights_manager.get_pretrained_model(model_id)
-    rand_img = torch.rand((8, model_info['num_channels'], 128, 128))
+    rand_img = torch.rand((8, model_info['num_channels'], 128, 128)).float()
     output = model(rand_img)
     assert output is not None
 
@@ -23,7 +23,7 @@ def test_pretrained_backbone(weights_manager, model_id):
 def test_pretrained_backbone_with_fpn(weights_manager, model_id):
     model_info = SatlasPretrain_weights[model_id]
     model = weights_manager.get_pretrained_model(model_id, fpn=True)
-    rand_img = torch.rand((8, model_info['num_channels'], 128, 128))
+    rand_img = torch.rand((8, model_info['num_channels'], 128, 128)).float()
     output = model(rand_img)
     assert output is not None
 
@@ -32,7 +32,7 @@ def test_pretrained_backbone_with_fpn(weights_manager, model_id):
 def test_pretrained_backbone_with_fpn_and_head(weights_manager, model_id, head):
     model_info = SatlasPretrain_weights[model_id]
     model = weights_manager.get_pretrained_model(model_id, fpn=True, head=head, num_categories=2)
-    rand_img = torch.rand((1, model_info['num_channels'], 128, 128))
+    rand_img = torch.rand((1, model_info['num_channels'], 128, 128)).float()
 
     rand_targets = None
     if head == Head.DETECT:
@@ -46,7 +46,19 @@ def test_pretrained_backbone_with_fpn_and_head(weights_manager, model_id, head):
             'labels': torch.tensor([0,1], dtype=torch.int64),
             'masks': torch.zeros_like(rand_img)
         }]
-    
-    output, loss = model(rand_img, rand_targets) if rand_targets else model(rand_img)
-    assert output is not None and loss is not None
+    elif head == Head.BINSEGMENT:
+        rand_targets = torch.zeros((1, 2, 32, 32))
+    elif head == Head.REGRESS:
+        rand_targets = torch.zeros((1, 2, 32, 32)).float()
+    elif head == Head.CLASSIFY:
+        rand_targets = torch.tensor([1])
 
+    # TODO: add rand_targets for SEGMENT and MULTICLASSIFY
+
+    if rand_targets is not None:
+        output, loss = model(rand_img, rand_targets)
+        assert output is not None
+        assert loss is not None
+    else:
+        output = model(rand_img)
+        assert output is not None

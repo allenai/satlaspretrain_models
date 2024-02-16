@@ -199,5 +199,8 @@ if __name__ == "__main__":
                         'labels': torch.tensor([0,1], dtype=torch.int64),
                         'masks': torch.zeros_like(rand_img)
                     }]
+            elif head in [Head.SEGMENT, Head.BINSEGMENT, Head.REGRESS]:
+                rand_targets = torch.zeros_like((rand_img))
+
             output, loss = model(rand_img, rand_targets)
             print("Successfully initialized the pretrained model with ID:", model_id, " with FPN and randomly initialized ", head, " Head.") 

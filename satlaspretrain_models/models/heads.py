@@ -176,16 +176,16 @@ class SimpleHead(torch.nn.Module):
             outputs = torch.nn.functional.softmax(raw_outputs, dim=1)
 
             if targets is not None:
-                task_targets = torch.stack([target for target in targets], dim=0)
-                loss = self.loss_func(raw_outputs, task_targets.long())
+                task_targets = torch.stack([target for target in targets], dim=0).float()
+                loss = self.loss_func(raw_outputs, task_targets)
                 loss = loss.mean()
 
         elif self.task_type == 'bin_segment':
             outputs = torch.nn.functional.softmax(raw_outputs, dim=1)
 
             if targets is not None:
-                task_targets = torch.stack([target for target in targets], dim=0)
-                loss = self.loss_func(raw_outputs, task_targets.float())
+                task_targets = torch.stack([target for target in targets], dim=0).float()
+                loss = self.loss_func(raw_outputs, task_targets)
                 loss = loss.mean()
 
         elif self.task_type == 'regress':
@@ -203,7 +203,7 @@ class SimpleHead(torch.nn.Module):
             outputs = torch.nn.functional.softmax(logits, dim=1)
 
             if targets is not None:
-                task_targets = targets.to(torch.long)
+                task_targets = torch.stack([target for target in targets], dim=0).to(torch.long)
                 loss = self.loss_func(logits, task_targets)
                 loss = loss.mean()
 
@@ -213,7 +213,7 @@ class SimpleHead(torch.nn.Module):
             outputs = torch.sigmoid(logits)
 
             if targets is not None:
-                task_targets = torch.cat([target for target in targets], dim=0).to(torch.float32)
+                task_targets = torch.stack([target for target in targets], dim=0).float()
                 loss = self.loss_func(logits, task_targets)
                 loss = loss.mean()
 

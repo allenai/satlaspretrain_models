@@ -196,6 +196,11 @@ Demos
 We provide a [demo](https://github.com/allenai/satlaspretrain_models/blob/main/demo.ipynb) showing how to finetune a 
 SatlasPretrain Sentinel-2 model on the EuroSAT classification task.
 
+We also provide a [torchgeo demo](https://github.com/allenai/satlaspretrain_models/blob/main/torchgeo_demo.ipynb), 
+showing how to load SatlasPretrain weights into a model, download a dataset, initialize a trainer, and finetune the model on the UCMerced classification task. 
+*Note*: a separate conda environment must be initialized to run this demo, see details in the notebook. 
+ 
+
 Tests
 -----
 There are tests to test loading pretrained models and one to test randomly initialized models.
