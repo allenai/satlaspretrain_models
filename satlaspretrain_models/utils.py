@@ -89,6 +89,18 @@ SatlasPretrain_weights = {
         'num_channels': 9,
         'multi_image': False
     },
+    'Sentinel2_SwinT_MI_RGB': {
+        'url': 'https://huggingface.co/allenai/satlas-pretrain/resolve/main/sentinel2_swint_mi_rgb.pth?download=true',
+        'backbone': Backbone.SWINT,
+        'num_channels': 3,
+        'multi_image': True
+    },
+    'Sentinel2_SwinT_MI_MS': {
+        'url': 'https://huggingface.co/allenai/satlas-pretrain/resolve/main/sentinel2_swint_mi_ms.pth?download=true',
+        'backbone': Backbone.SWINT,
+        'num_channels': 9,
+        'multi_image': True
+    },
     'Sentinel2_Resnet50_SI_RGB': {
         'url': 'https://huggingface.co/allenai/satlas-pretrain/resolve/main/sentinel2_resnet50_si_rgb.pth?download=true',
         'backbone': Backbone.RESNET50,
@@ -107,6 +119,12 @@ SatlasPretrain_weights = {
         'num_channels': 3,
         'multi_image': True
     },
+    'Sentinel2_Resnet50_MI_MS': {
+        'url': 'https://huggingface.co/allenai/satlas-pretrain/resolve/main/sentinel2_resnet50_mi_ms.pth?download=true',
+        'backbone': Backbone.RESNET50,
+        'num_channels': 9,
+        'multi_image': True
+    },
     'Sentinel2_Resnet152_SI_RGB': {
         'url': 'https://huggingface.co/allenai/satlas-pretrain/resolve/main/sentinel2_resnet152_si_rgb.pth?download=true',
         'backbone': Backbone.RESNET152,
@@ -123,6 +141,12 @@ SatlasPretrain_weights = {
         'url': 'https://huggingface.co/allenai/satlas-pretrain/resolve/main/sentinel2_resnet152_mi_rgb.pth?download=true',
         'backbone': Backbone.RESNET152,
         'num_channels': 3,
+        'multi_image': True
+    },
+    'Sentinel2_Resnet152_MI_MS': {
+        'url': 'https://huggingface.co/allenai/satlas-pretrain/resolve/main/sentinel2_resnet152_mi_ms.pth?download=true',
+        'backbone': Backbone.RESNET152,
+        'num_channels': 9,
         'multi_image': True
     },
 }
