@@ -176,7 +176,7 @@ class SimpleHead(torch.nn.Module):
             outputs = torch.nn.functional.softmax(raw_outputs, dim=1)
 
             if targets is not None:
-                task_targets = torch.stack([target for target in targets], dim=0).float()
+                task_targets = torch.stack([target for target in targets], dim=0).long()
                 loss = self.loss_func(raw_outputs, task_targets)
                 loss = loss.mean()
 
@@ -184,7 +184,7 @@ class SimpleHead(torch.nn.Module):
             outputs = torch.nn.functional.softmax(raw_outputs, dim=1)
 
             if targets is not None:
-                task_targets = torch.stack([target for target in targets], dim=0).float()
+                task_targets = torch.stack([target for target in targets], dim=0).long()
                 loss = self.loss_func(raw_outputs, task_targets)
                 loss = loss.mean()
 
@@ -193,7 +193,7 @@ class SimpleHead(torch.nn.Module):
             outputs = 255*raw_outputs
 
             if targets is not None:
-                task_targets = torch.stack([target for target in targets], dim=0)
+                task_targets = torch.stack([target for target in targets], dim=0).long()
                 loss = self.loss_func(raw_outputs, task_targets.float()/255)
                 loss = loss.mean()
 
@@ -203,7 +203,7 @@ class SimpleHead(torch.nn.Module):
             outputs = torch.nn.functional.softmax(logits, dim=1)
 
             if targets is not None:
-                task_targets = torch.stack([target for target in targets], dim=0).to(torch.long)
+                task_targets = torch.stack([target for target in targets], dim=0).long()
                 loss = self.loss_func(logits, task_targets)
                 loss = loss.mean()
 
@@ -213,7 +213,7 @@ class SimpleHead(torch.nn.Module):
             outputs = torch.sigmoid(logits)
 
             if targets is not None:
-                task_targets = torch.stack([target for target in targets], dim=0).float()
+                task_targets = torch.stack([target for target in targets], dim=0).long()
                 loss = self.loss_func(logits, task_targets)
                 loss = loss.mean()
 
