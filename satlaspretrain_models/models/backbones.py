@@ -2,7 +2,7 @@ import torch.nn
 import torchvision
 
 class SwinBackbone(torch.nn.Module):
-    def __init__(self, num_channels, arch='swinb'):
+    def __init__(self, num_channels, arch):
         super(SwinBackbone, self).__init__()
 
         if arch == 'swinb':

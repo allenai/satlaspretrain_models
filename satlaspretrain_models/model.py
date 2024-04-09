@@ -81,7 +81,13 @@ class Model(torch.nn.Module):
             raise ValueError("Must specify num_categories if head is desired.")
 
         self.backbone = self._initialize_backbone(num_channels, backbone, multi_image, weights)
-        self.fpn = self._initialize_fpn(self.backbone.out_channels, weights) if fpn else None
+
+        if fpn:
+            self.fpn = self._initialize_fpn(self.backbone.out_channels, weights)
+            self.upsample = Upsample(self.fpn.out_channels)
+        else:
+            self.fpn = None
+
         if head:
             self.head = self._initialize_head(head, self.fpn.out_channels, num_categories) if fpn else self._initialize_head(head, self.backbone.out_channels, num_categories)
         else:
@@ -149,6 +155,7 @@ class Model(torch.nn.Module):
         x = self.backbone(imgs)
         if self.fpn:
             x = self.fpn(x)
+            x = self.upsample(x)
         if self.head:
             x, loss = self.head(imgs, x, targets)
             return x, loss
