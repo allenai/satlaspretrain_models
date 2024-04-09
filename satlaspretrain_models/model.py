@@ -84,7 +84,7 @@ class Model(torch.nn.Module):
 
         if fpn:
             self.fpn = self._initialize_fpn(self.backbone.out_channels, weights)
-            self.upsample = Upsample(self.backbone.out_channels)
+            self.upsample = Upsample(self.fpn.out_channels)
         else:
             self.fpn = None
 
