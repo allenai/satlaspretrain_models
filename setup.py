@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="satlaspretrain_models",
-    version="0.2.0",
+    version="0.3.0",
     author="Satlas @ AI2",
     author_email="satlas@allenai.org",
     description="A simple package that makes it easy to load remote sensing foundation models for downstream use cases.",
