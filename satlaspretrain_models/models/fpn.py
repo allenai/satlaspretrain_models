@@ -7,7 +7,7 @@ class FPN(torch.nn.Module):
     def __init__(self, backbone_channels):
         super(FPN, self).__init__()
 
-        out_channels = backbone_channels[0][1]
+        out_channels = 128
         in_channels_list = [ch[1] for ch in backbone_channels]
         self.fpn = torchvision.ops.FeaturePyramidNetwork(in_channels_list=in_channels_list, out_channels=out_channels)
 
