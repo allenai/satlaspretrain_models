@@ -57,14 +57,6 @@ class ResnetBackbone(torch.nn.Module):
 
     def train(self, mode=True):
         super(ResnetBackbone, self).train(mode)
-        if self.freeze_bn:
-            for module in self.modules():
-                if isinstance(module, torch.nn.BatchNorm2d):
-                    if hasattr(module, 'weight'):
-                        module.weight.requires_grad_(False)
-                    if hasattr(module, 'bias'):
-                        module.bias.requires_grad_(False)
-                    module.eval()
 
     def forward(self, x):
         x = self.resnet.conv1(x)
