@@ -101,5 +101,9 @@ def test_random_backbone_with_fpn_and_head(backbone, head, infra):
         assert output is not None
         assert loss is not None
     else:
-        output = model(rand_img)
+        out = model.backbone(rand_img)
+        out = model.fpn(out)
+        out = model.upsample(out)
+        out[0] = torch.cat((out[0], rand_ir), dim=1) if infra == 1 else out[0]
+        output = model.head(rand_img, out)
         assert output is not None
