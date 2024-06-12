@@ -210,11 +210,9 @@ class Model(torch.nn.Module):
                 "regress", backbone_channels, num_categories, ignore_index
             )
         elif head == Head.DETECT:
-            return FRCNNHead("detect", backbone_channels, num_categories, ignore_index)
+            return FRCNNHead("detect", backbone_channels, num_categories)
         elif head == Head.INSTANCE:
-            return FRCNNHead(
-                "instance", backbone_channels, num_categories, ignore_index
-            )
+            return FRCNNHead("instance", backbone_channels, num_categories)
         return None
 
     def forward(self, imgs, targets=None):
