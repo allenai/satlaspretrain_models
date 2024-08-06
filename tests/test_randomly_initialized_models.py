@@ -39,17 +39,17 @@ def test_random_backbone_with_fpn(backbone):
     assert output is not None
 
 
-# Test loading pretrained backbones with FPN, every possible Head and every possible infra
+# Test loading pretrained backbones with FPN, every possible Head and every possible additional_bands
 @pytest.mark.parametrize(
-    "backbone,head,infra",
+    "backbone,head,additional_bands",
     [
-        (backbone, head, infra)
+        (backbone, head, additional_bands)
         for backbone in Backbone
         for head in Head
-        for infra in [0, 1]
+        for additional_bands in [0, 1]
     ],
 )
-def test_random_backbone_with_fpn_and_head(backbone, head, infra):
+def test_random_backbone_with_fpn_and_head(backbone, head, additional_bands):
     model = Model(
         num_channels=3,
         multi_image=False,
@@ -58,7 +58,7 @@ def test_random_backbone_with_fpn_and_head(backbone, head, infra):
         head=head,
         num_categories=2,
         weights=None,
-        infra=infra,
+        additional_bands=additional_bands,
     )
     rand_img = torch.rand((1, 3, 128, 128)).float()
     rand_ir = torch.rand((1, 1, 128, 128)).float()
@@ -96,7 +96,9 @@ def test_random_backbone_with_fpn_and_head(backbone, head, infra):
         out = model.backbone(rand_img)
         out = model.fpn(out)
         out = model.upsample(out)
-        out[0] = torch.cat((out[0], rand_ir), dim=1) if infra == 1 else out[0]
+        out[0] = (
+            torch.cat((out[0], rand_ir), dim=1) if additional_bands == 1 else out[0]
+        )
         output, loss = model.head(rand_img, out, rand_targets)
         assert output is not None
         assert loss is not None
@@ -104,6 +106,8 @@ def test_random_backbone_with_fpn_and_head(backbone, head, infra):
         out = model.backbone(rand_img)
         out = model.fpn(out)
         out = model.upsample(out)
-        out[0] = torch.cat((out[0], rand_ir), dim=1) if infra == 1 else out[0]
+        out[0] = (
+            torch.cat((out[0], rand_ir), dim=1) if additional_bands == 1 else out[0]
+        )
         output = model.head(rand_img, out)
         assert output is not None

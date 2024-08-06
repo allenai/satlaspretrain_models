@@ -2,7 +2,7 @@ import pytest
 import torch
 
 from satlaspretrain_models.model import Weights
-from satlaspretrain_models.utils import SatlasPretrain_weights, Head
+from satlaspretrain_models.utils import Head, SatlasPretrain_weights
 
 
 # Fixture for weights manager
@@ -31,20 +31,26 @@ def test_pretrained_backbone_with_fpn(weights_manager, model_id):
     assert output is not None
 
 
-# Test loading pretrained backbones with FPN, every possible Head and every possible infra
+# Test loading pretrained backbones with FPN, every possible Head and every possible additional_bands
 @pytest.mark.parametrize(
-    "model_id,head,infra",
+    "model_id,head,additional_bands",
     [
-        (model_id, head, infra)
+        (model_id, head, additional_bands)
         for model_id in SatlasPretrain_weights.keys()
         for head in Head
-        for infra in [0, 1]
+        for additional_bands in [0, 1]
     ],
 )
-def test_pretrained_backbone_with_fpn_and_head(weights_manager, model_id, head, infra):
+def test_pretrained_backbone_with_fpn_and_head(
+    weights_manager, model_id, head, additional_bands
+):
     model_info = SatlasPretrain_weights[model_id]
     model = weights_manager.get_pretrained_model(
-        model_id, fpn=True, head=head, num_categories=2, infra=infra
+        model_id,
+        fpn=True,
+        head=head,
+        num_categories=2,
+        additional_bands=additional_bands,
     )
     rand_img = torch.rand((1, model_info["num_channels"], 128, 128)).float()
     rand_ir = torch.rand((1, 1, 128, 128)).float()
@@ -82,7 +88,9 @@ def test_pretrained_backbone_with_fpn_and_head(weights_manager, model_id, head, 
         out = model.backbone(rand_img)
         out = model.fpn(out)
         out = model.upsample(out)
-        out[0] = torch.cat((out[0], rand_ir), dim=1) if infra == 1 else out[0]
+        out[0] = (
+            torch.cat((out[0], rand_ir), dim=1) if additional_bands == 1 else out[0]
+        )
         output, loss = model.head(rand_img, out, rand_targets)
         assert output is not None
         assert loss is not None
@@ -90,6 +98,8 @@ def test_pretrained_backbone_with_fpn_and_head(weights_manager, model_id, head, 
         out = model.backbone(rand_img)
         out = model.fpn(out)
         out = model.upsample(out)
-        out[0] = torch.cat((out[0], rand_ir), dim=1) if infra == 1 else out[0]
+        out[0] = (
+            torch.cat((out[0], rand_ir), dim=1) if additional_bands == 1 else out[0]
+        )
         output = model.head(rand_img, out)
         assert output is not None

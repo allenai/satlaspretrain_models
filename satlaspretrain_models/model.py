@@ -1,15 +1,16 @@
-import torch
-import torch.nn
-import requests
 from io import BytesIO
 
+import requests
+import torch
+import torch.nn
+
+from satlaspretrain_models.models import *
 from satlaspretrain_models.utils import (
     Backbone,
     Head,
     SatlasPretrain_weights,
     adjust_state_dict_prefix,
 )
-from satlaspretrain_models.models import *
 
 
 class Weights:
@@ -26,7 +27,7 @@ class Weights:
         head=None,
         num_categories=None,
         device="cuda",
-        infra=0,
+        additional_bands=0,
         ignore_index=255,
     ):
         """
@@ -73,7 +74,7 @@ class Weights:
             head=head,
             num_categories=num_categories,
             weights=weights,
-            infra=infra,
+            additional_bands=additional_bands,
             ignore_index=ignore_index,
         )
         return model
@@ -89,7 +90,7 @@ class Model(torch.nn.Module):
         head=None,
         num_categories=None,
         weights=None,
-        infra=0,
+        additional_bands=0,
         ignore_index=255,
     ):
         """
@@ -131,7 +132,7 @@ class Model(torch.nn.Module):
             self.head = (
                 self._initialize_head(
                     head,
-                    [[x, y + infra] for x, y in self.fpn.out_channels],
+                    [[x, y + additional_bands] for x, y in self.fpn.out_channels],
                     num_categories,
                     ignore_index,
                 )
